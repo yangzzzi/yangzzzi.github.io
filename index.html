@@ -5,26 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的个人主页</title>
     <style>
+        /* 全局变量：方便一键切换深浅色主题 */
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #555555;
+            --primary-color: #1e3c72;
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --card-hover-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* 暗黑模式变量 */
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-sub: #aaaaaa;
+            --primary-gradient: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --card-hover-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
         /* 全局样式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             line-height: 1.6;
+            padding-bottom: 30px;
         }
         
         /* 头部/头像区域 */
         header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: var(--primary-gradient);
             color: white;
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px 40px;
+            position: relative;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
         }
+
+        /* 暗黑模式切换按钮 */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
         .avatar {
             width: 100px;
             height: 100px;
@@ -36,14 +81,21 @@
             justify-content: center;
             font-size: 40px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite; /* 头像微浮动特效 */
         }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
         header h1 {
             font-size: 24px;
             margin-bottom: 8px;
+            letter-spacing: 1px;
         }
         header p {
             font-size: 14px;
-            opacity: 0.8;
+            opacity: 0.85;
         }
 
         /* 主体内容区域 */
@@ -55,48 +107,95 @@
 
         /* 卡片样式 */
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 22px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
+            transform: translateY(0);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
+        /* 手机端触摸或悬停时卡片微微浮起 */
+        .card:active, .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
         .card h2 {
             font-size: 18px;
-            color: #1e3c72;
-            margin-bottom: 12px;
-            border-left: 4px solid #1e3c72;
-            padding-left: 8px;
+            color: #2a5298;
+            margin-bottom: 14px;
+            border-left: 4px solid #2a5298;
+            padding-left: 10px;
         }
+        /* 当处于暗黑模式时，调整标题颜色以获得更好对比度 */
+        [data-theme="dark"] .card h2 {
+            color: #6dd5ed;
+            border-left-color: #6dd5ed;
+        }
+
         .card p {
             font-size: 15px;
-            color: #555;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+        }
+        .card p:last-child {
+            margin-bottom: 0;
         }
 
         /* 互动按钮 */
         .btn-box {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 15px;
         }
         .interactive-btn {
-            background-color: #1e3c72;
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 15px;
-            border-radius: 25px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             width: 100%;
+            transition: transform 0.1s, opacity 0.2s;
         }
-        .interactive-btn:hover {
-            background-color: #2a5298;
+        .interactive-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* 自定义美化通知组件（Toast） */
+        .toast {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show {
+            top: 30px;
+        }
+        [data-theme="dark"] .toast {
+            background: #f5f5f5;
+            color: #222;
         }
 
         /* 页脚 */
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 20px 0;
             font-size: 12px;
             color: #aaa;
         }
@@ -104,23 +203,27 @@
 </head>
 <body>
 
+    <div class="toast" id="toastMessage">🎉 嗨！网页交互成功啦！</div>
+
     <header>
+        <button class="theme-toggle" id="themeBtn">🌙 夜间</button>
         <div class="avatar">🚀</div>
         <h1>欢迎来到杨子的空间</h1>
-        <p>探索科技 / 热爱生活 / 持续 热爱</p>
+        <p>探索科技 / 热爱生活 / 持续热爱</p>
     </header>
 
     <main>
         <div class="card">
             <h2>关于我</h2>
-            <p>你好！yangzi这是一个完全在安卓手机上运行的网页示例。我喜欢探索新鲜的技术，利用数字工具来提升效率和创造精彩内容。</p>
+            <p>你好！我是杨子。这是一个完全在安卓手机上运行的网页示例。我喜欢探索新鲜的技术，利用数字工具来提升效率和创造精彩内容。</p>
         </div>
 
         <div class="card">
-            <h2>兴趣爱好特立独行</h2>
+            <h2>兴趣爱好</h2>
             <p>💻 探索前沿的网络技术与数字工具</p>
             <p>🚗 钻研汽车机械结构与日常维护</p>
-            <p>📈 观察数据趋势与逻辑分析</p>        </div>
+            <p>📈 观察数据趋势与逻辑分析</p>
+        </div>
 
         <div class="btn-box">
             <button class="interactive-btn" id="helloBtn">点我打个招呼</button>
@@ -132,8 +235,39 @@
     </footer>
 
     <script>
-        document.getElementById('helloBtn').addEventListener('click', function() {
-            alert('🎉 嗨！恭喜你，你的第一个手机制作的网页互动成功了！');
+        // --- 互动打招呼功能 ---
+        const helloBtn = document.getElementById('helloBtn');
+        const toast = document.getElementById('toastMessage');
+        
+        helloBtn.addEventListener('click', function() {
+            toast.classList.add('show');
+            // 3秒后自动收回通知
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        });
+
+        // --- 暗黑/日间模式切换 ---
+        const themeBtn = document.getElementById('themeBtn');
+        
+        // 检查本地存储中是否有用户之前的选择
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeBtn.textContent = currentTheme === 'dark' ? '☀️ 白天' : '🌙 夜间';
+        }
+
+        themeBtn.addEventListener('click', function() {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeBtn.textContent = '🌙 夜间';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeBtn.textContent = '☀️ 白天';
+            }
         });
     </script>
 </body>
