@@ -15,6 +15,7 @@
             --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             --shadow: 0 4px 6px rgba(0,0,0,0.05);
             --card-hover-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --accordion-bg: #f9fbfb;
         }
 
         /* 暗黑模式变量 */
@@ -26,6 +27,7 @@
             --primary-gradient: linear-gradient(135deg, #141e30 0%, #243b55 100%);
             --shadow: 0 4px 6px rgba(0,0,0,0.3);
             --card-hover-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            --accordion-bg: #252525;
         }
 
         /* 全局样式 */
@@ -34,6 +36,344 @@
             padding: 0;
             box-sizing: border-box;
             transition: background-color 0.3s, color 0.3s;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 30px;
+        }
+        
+        /* 头部/头像区域 */
+        header {
+            background: var(--primary-gradient);
+            color: white;
+            text-align: center;
+            padding: 50px 20px 40px;
+            position: relative;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* 暗黑模式切换按钮 */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #fff;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        header p {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* 主体内容区域 */
+        main {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            color: #2a5298;
+            margin-bottom: 14px;
+            border-left: 4px solid #2a5298;
+            padding-left: 10px;
+        }
+        [data-theme="dark"] .card h2 {
+            color: #6dd5ed;
+            border-left-color: #6dd5ed;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: var(--text-sub);
+        }
+
+        /* --- 手风琴下拉列表样式 --- */
+        .accordion-item {
+            margin-top: 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--accordion-bg);
+        }
+
+        /* 下拉头部（可点击区域） */
+        .accordion-header {
+            padding: 14px 16px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .accordion-header:active {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        /* 右侧小箭头 */
+        .arrow-icon {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            color: var(--text-sub);
+        }
+
+        /* 下拉核心：通过 max-height 实现丝滑动画 */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        /* 内部文字排版 */
+        .accordion-body {
+            padding: 0 16px 16px 16px;
+            font-size: 14px;
+            color: var(--text-sub);
+            border-top: 1px dashed rgba(0, 0, 0, 0.05);
+            padding-top: 12px;
+        }
+        [data-theme="dark"] .accordion-body {
+            border-top-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 激活状态（展开时）的样式控制 */
+        .accordion-item.active .arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        /* 互动按钮 */
+        .btn-box {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .interactive-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            width: 100%;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .interactive-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* 自定义美化通知组件（Toast） */
+        .toast {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show {
+            top: 30px;
+        }
+        [data-theme="dark"] .toast {
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶层通知组件 -->
+    <div class="toast" id="toastMessage">🎉 嗨！网页交互成功啦！</div>
+
+    <header>
+        <!-- 暗黑模式切换按钮 -->
+        <button class="theme-toggle" id="themeBtn">🌙 夜间</button>
+        <div class="avatar">🚀</div>
+        <h1>欢迎来到杨子的空间</h1>
+        <p>探索科技 / 热爱生活 / 持续热爱</p>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>关于我</h2>
+            <p>你好！我是杨子。这是一个完全在安卓手机上运行的网页示例。我喜欢探索新鲜的技术，利用数字工具来提升效率和创造精彩内容。</p>
+        </div>
+
+        <div class="card">
+            <h2>兴趣爱好 (点击展开)</h2>
+            
+            <!-- 项 1：网络技术 -->
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>💻 探索前沿的网络技术与数字工具</span>
+                    <span class="arrow-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        专注于高效率的网络协议与 VPS 玩耍。喜欢研究 Hysteria2、Reality 等前沿工具，探索各种网络环境下的低延迟与稳定性，打造属于自己的流畅网络体验。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项 2：汽车机械 -->
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>🚗 钻研汽车机械结构与日常维护</span>
+                    <span class="arrow-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        对机械构造充满了好奇。平时喜欢动手钻研车辆的细节，不管是给爱车更换大灯灯泡、拆装尾灯，还是研究引擎与传动结构的维护，都享受那种亲自动手、解决问题的成就感。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项 3：数据趋势 -->
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>📈 观察数据趋势与逻辑分析</span>
+                    <span class="arrow-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        喜欢从看似随机的数据中寻找潜在的规律。通过趋势图表与数据分析，锻炼自己的逻辑思维，在数字的变化中发现不一样的乐趣。
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="btn-box">
+            <button class="interactive-btn" id="helloBtn">点我打个招呼</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 我的个人主页. Built on Android.</p>
+    </footer>
+
+    <script>
+        // --- 互动打招呼功能 ---
+        const helloBtn = document.getElementById('helloBtn');
+        const toast = document.getElementById('toastMessage');
+        
+        helloBtn.addEventListener('click', function() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        });
+
+        // --- 暗黑/日间模式切换 ---
+        const themeBtn = document.getElementById('themeBtn');
+        
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeBtn.textContent = currentTheme === 'dark' ? '☀️ 白天' : '🌙 夜间';
+        }
+
+        themeBtn.addEventListener('click', function() {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeBtn.textContent = '🌙 夜间';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeBtn.textContent = '☀️ 白天';
+            }
+        });
+
+        // --- 手风琴下拉点击逻辑 ---
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                const content = item.querySelector('.accordion-content');
+                
+                // 切换当前点击项的激活状态
+                item.classList.toggle('active');
+                
+                if (item.classList.contains('active')) {
+                    // 如果展开，将 max-height 设置为内容的实际高度
+                    content.style.maxHeight = content.scrollHeight + "px";
+                } else {
+                    // 如果收起，高度归零
+                    content.style.maxHeight = "0px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
